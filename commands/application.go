@@ -83,6 +83,7 @@ func (cmd *Application) show(appName string) {
 	if nil != err {
 		error_handler.ErrorExit(err)
 	}
+
 	table := terminal.NewTable([]string{"Id:", application.Id})
 	table.Add("Name:", application.Spec.Name)
 	table.Add("Status:", string(application.Status))
@@ -103,9 +104,17 @@ func (cmd *Application) list() {
 	if nil != err {
 		error_handler.ErrorExit(err)
 	}
-	table := terminal.NewTable([]string{"Id", "Name", "Status", "Location"})
-	for _, app := range applications {
-		table.Add(app.Id, app.Spec.Name, string(app.Status), strings.Join(app.Spec.Locations, ", "))
+
+	if (cmd.quiet) {
+		table := terminal.NewTable()
+		for _, app := range applications {
+			table.Add(app.Id)
+		}
+	} else {
+		table := terminal.NewTable([]string{"Id", "Name", "Status", "Location"})
+		for _, app := range applications {
+			table.Add(app.Id, app.Spec.Name, string(app.Status), strings.Join(app.Spec.Locations, ", "))
+		}
 	}
 	table.Print()
 }

@@ -42,6 +42,10 @@ var appConfig = configDefaults{
 	Version:  "0.10.0-SNAPSHOT",  // BROOKLYN_VERSION
 }
 
+var quiet bool
+var inspect bool
+var format string
+
 func NewApp(baseName string, cmdRunner command_runner.Runner, metadatas ...command_metadata.CommandMetadata) (app *cli.App) {
 
 	cli.AppHelpTemplate = appHelpTemplate()
@@ -51,11 +55,27 @@ func NewApp(baseName string, cmdRunner command_runner.Runner, metadatas ...comma
 	app.HelpName = appConfig.HelpName
 	app.Usage = appConfig.Usage
 	app.Version = appConfig.Version
+	app.EnableBashCompletion = true
 
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "skipSslChecks",
-			Usage: "Skip verification of server's certificate chain and hostname (for use with self-signed certs)",
+			Usage: "Eats verification of server's certificate chain and hostname (for use with self-signed certs)",
+		},
+		cli.BoolFlag{
+			Name:  "quiet, q",
+			Usage: "Returns only a list of identifiers",
+			Destination: &quiet,
+		},
+		cli.BoolFlag{
+			Name:  "inspect, i",
+			Usage: "Returns information as block of JSON data",
+			Destination: &inspect,
+		},
+		cli.StringFlag{
+			Name:  "format, f",
+			Usage: "Use `FORMAT` as a go template to format the output with",
+			Destination: &format,
 		},
 	}
 
